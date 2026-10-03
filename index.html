@@ -30,7 +30,26 @@
   .editor h2 { font-size:21px; margin:28px 0 12px; border-bottom:1px solid #334155; padding-bottom:6px; }
   .editor h3 { font-size:18px; margin:22px 0 8px; }
   .editor img { display:block; max-width:100%; height:auto; }
-  .editor li { margin:6px 0; } .editor strong { color:#fff; } .editor a { color:#93c5fd; }
+  .editor li { margin:6px 0; }
+  .editor strong { color:#fff; }
+  .editor > h1 { color:#f8fafc; }
+  .editor > h2 { color:#bfdbfe; }
+  .editor > p { color:#e2e8f0; }
+  .editor div[style*="background:#fff8ed;"] { color:#5c2b12; }
+  .editor div[style*="background:#fff8ed;"] :is(strong,p,li) { color:#5c2b12 !important; }
+  .editor div[style*="background:#fff8ed;"] > strong { color:#71320d !important; background:#fce4c8; border-radius:999px; padding:3px 9px; }
+  .editor div[style*="background:#f4f8fd;"] { color:#1c2f52; }
+  .editor div[style*="background:#f4f8fd;"] :is(h3,p,li) { color:#1c2f52 !important; }
+  .editor div[style*="background:#f7fbf7;"] { color:#1d3a29; }
+  .editor div[style*="background:#f7fbf7;"] :is(h3,p,li) { color:#1d3a29 !important; }
+  .editor div[style*="background:#fff"] { color:#1c2f52; }
+  .editor div[style*="background:#fff"] :is(strong,h3,p,li) { color:#1c2f52 !important; }
+  .editor table th { color:#fff; background:#1c2f52; }
+  .editor table th[style*="background:#eaf2fb"] { color:#1c2f52 !important; background:#eaf2fb; }
+  .editor table tbody th { color:#1c2f52 !important; background:#f7faff; }
+  .editor table td { color:#1c2f52 !important; } .editor table tbody td { color:#1c2f52 !important; } .editor div[style*="background:#fff"] :is(h3,p,strong) { color:#1c2f52 !important; }
+  .editor a { color:#93c5fd; }
+
 
   .hint { color:#94a3b8; font-size:12px; padding:10px 4px; }
   .empty-box { padding:80px 20px; text-align:center; font-size:22px; color:#94a3b8; background:#1e293b; border-radius:12px; }
