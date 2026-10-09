@@ -1,10 +1,111 @@
-<h1>HandBrake와 FFmpeg 비교: 강의 영상 용량 줄일 때 화질·속도·스트리밍</h1>
-<div class="article-rich"><p>강의 영상 파일을 작게 만들 때 HandBrake가 FFmpeg보다 화질을 더 잘 지켜주는 것은 아닙니다. 두 도구 모두 같은 코덱과 인코딩 설정을 쓰면 같은 계열의 인코더 결과를 만들 수 있고, 화면 품질은 코덱·품질값·프리셋·원본·재생기 조합이 좌우합니다. 손으로 짧은 구간을 비교하기에는 HandBrake가 편하고, 앱 자동화와 여러 스트리밍 화질을 만드는 작업에는 FFmpeg가 유연합니다.</p><p>수식과 작은 글씨가 많은 강의라면 압축률만 보지 말고 실제 화면에서 읽히는지 테스트해야 합니다. HandBrake로 설정 범위를 빠르게 살핀 뒤, 선택한 코덱·필터·오디오 조건을 FFmpeg 파이프라인에 재현하는 방식이 실용적입니다. 단, HandBrake의 RF와 FFmpeg의 CRF 숫자가 같다고 동일 품질은 아니며, 하드웨어 인코더와 소프트웨어 인코더도 숫자를 직접 비교할 수 없습니다.</p>
-<h2>HandBrake와 FFmpeg는 어떤 점이 다른가요?</h2><img src="https://kmt9934.github.io/blog-review/b4/fig1.png" alt="HandBrake는 GUI 테스트에, FFmpeg는 앱 자동화와 패키징에 적합한 차이" style="max-width:100%;height:auto"><p>HandBrake는 데스크톱 GUI와 프리셋 중심의 동영상 변환기입니다. 공식 설명서는 일정한 화면 품질을 목표로 하는 Constant Quality 설정을 기본 권장하고, Preview 기능으로 짧은 클립을 인코딩해 미리 확인하도록 안내합니다. 초보자가 코덱·화질·자막 같은 옵션을 눈으로 살펴보기 쉽다는 점이 강점입니다.</p><p>FFmpeg는 명령줄 도구와 라이브러리를 포함한 미디어 처리 프레임워크입니다. 비디오·오디오 인코딩뿐 아니라 필터, 자막·스트림 선택, 포맷 변환, HLS·DASH 패키징 등을 명령으로 자동화할 수 있습니다. 앱에서 파일마다 같은 처리를 재현하거나 서버 작업으로 연결할 때 적합하지만, 옵션 조합과 호환성 검증은 개발자가 관리해야 합니다.</p><p>핵심은 어느 한쪽의 압축 알고리즘이 마법처럼 우월한 게 아니라는 점입니다. 예를 들어 양쪽에서 모두 x264를 동일 버전·같은 인코딩 옵션으로 호출하면 결과 차이는 도구의 기본값이나 적용한 필터·오디오·컨테이너 조건에서 생길 수 있습니다. 기본 프리셋끼리 비교하면 여러 조건이 한꺼번에 달라지므로, 로고처럼 제품 이름만 놓고 화질을 판정하기 어렵습니다.</p>
-<h2>화질을 지키면서 용량을 줄이는 기준은 무엇인가요?</h2><img src="https://kmt9934.github.io/blog-review/b4/fig2.png" alt="강의 화면의 글자와 수식을 보며 대표 장면으로 인코딩 품질을 비교하는 방법" style="max-width:100%;height:auto"><p>HandBrake 공식 품질 안내는 x264·x265 인코더에서 RF 값이 낮아질수록 화질이 높아지고 파일 크기도 커지는 경향을 설명합니다. 1080p의 RF 20~24는 공식 문서가 제시하는 일반적인 참고 범위지만, 특정 EBS 강의 파일에서 그 값이 최적이라는 뜻은 아닙니다. 영상의 움직임·노이즈·글자 선명도와 이용자의 화면 크기에 따라 알맞은 지점이 달라집니다. W3C의 미디어 접근성 안내는 영상의 차트·그래프·화면 속 텍스트가 시각정보의 일부임을 강조합니다. 강의 인코딩에서는 이런 시각정보를 읽을 수 있는지 점검하고, 음성만으로 이해하기 어려운 핵심 도표는 별도 대체 설명이나 자막·전사 자료도 제공하는 편이 학습 접근성에 도움이 됩니다.</p><p>짧은 샘플을 비교할 때는 글자가 작거나 수식이 빽빽한 판서 구간, 화면 전환, 움직임이 있는 강사 장면을 모두 포함합니다. 같은 원본의 같은 시간 구간을 각 설정으로 인코딩하고, 동일한 재생기와 화면 크기에서 원본과 결과를 번갈아 확인하세요. 글자 획이 뭉개지거나 수식 기호가 사라지거나 모션에서 블록·밴딩이 늘어나는 시점을 찾으면, 그보다 한 단계 높은 품질 설정을 선택합니다.</p><p>파일 크기 목표가 꼭 정해져 있으면 평균 비트레이트 방식으로 크기를 조절할 수 있지만, 장면마다 필요한 데이터 양이 달라 품질이 고르지 않을 수 있습니다. HandBrake의 안내는 일정한 화질을 우선할 때 Constant Quality를 권하며, 이 방식의 출력 용량은 원본 내용에 따라 달라진다고 설명합니다. 따라서 저장 공간 한도와 최소 가독성 중 무엇을 우선하는지 먼저 정하고, 샘플 결과를 기준으로 절충점을 잡으세요.</p><div style="overflow-x:auto;margin:20px 0"><table style="width:100%;border-collapse:collapse;font-size:15px;line-height:1.55"><thead><tr><th style="border:1px solid #d8e1ec;padding:10px;background:#1c2f52;color:#fff">비교 항목</th><th style="border:1px solid #d8e1ec;padding:10px;background:#eaf2fb;color:#1c2f52">HandBrake</th><th style="border:1px solid #d8e1ec;padding:10px;background:#eaf2fb;color:#1c2f52">FFmpeg</th></tr></thead><tbody><tr><th style="border:1px solid #d8e1ec;padding:10px;text-align:left;background:#f7faff;color:#1c2f52">주요 사용 방식</th><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">GUI 프리셋으로 수동 변환</td><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">CLI·라이브러리로 반복 처리</td></tr><tr><th style="border:1px solid #d8e1ec;padding:10px;text-align:left;background:#f7faff;color:#1c2f52">품질 탐색</th><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">미리보기·RF 조정이 간편</td><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">CRF·비트레이트·인코더 옵션을 지정</td></tr><tr><th style="border:1px solid #d8e1ec;padding:10px;text-align:left;background:#f7faff;color:#1c2f52">자동화·스트리밍</th><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">개별 MP4 변환에 편리</td><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">필터·오디오·HLS/DASH까지 명령화 가능</td></tr><tr><th style="border:1px solid #d8e1ec;padding:10px;text-align:left;background:#f7faff;color:#1c2f52">웹 재생 옵션</th><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">MP4 Fast Start 메타데이터 배치</td><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">포맷·세그먼트 출력을 세밀히 설정</td></tr><tr><th style="border:1px solid #d8e1ec;padding:10px;text-align:left;background:#f7faff;color:#1c2f52">적합한 역할</th><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">사람이 샘플·프리셋을 비교</td><td style="border:1px solid #d8e1ec;padding:10px;color:#1c2f52">앱 파이프라인·일괄 변환 운영</td></tr></tbody></table></div>
-<h2>RF와 CRF 숫자를 같게 맞추면 공정한 비교인가요?</h2><img src="https://kmt9934.github.io/blog-review/b4/fig3.png" alt="품질 숫자는 인코더에 따라 척도가 다르므로 같은 클립을 직접 시청 비교" style="max-width:100%;height:auto"><p>아닙니다. RF와 CRF는 이름이 비슷하지만 값의 의미는 선택된 인코더에 달려 있습니다. HandBrake 공식 문서는 x264·x265 같은 소프트웨어 인코더는 낮은 RF가 더 높은 품질인 반면, 일부 하드웨어 인코더는 반대 방향으로 작동할 수 있다고 명시합니다. 특히 x264와 x265에서 안내하는 RF 범위는 해당 인코더 계열의 참고값이며 NVENC·QSV·VideoToolbox 같은 별도 하드웨어 경로에 그대로 옮기지 않습니다. 실험 기록에는 인코더의 실제 이름과 소프트웨어 또는 하드웨어 여부를 함께 남기면 같은 수치가 왜 다른 화질을 냈는지 추적하기 쉽습니다. 같은 앱 안에서도 인코더가 달라지면 숫자의 방향과 품질 결과가 변동할 수 있습니다.</p><p>FFmpeg에서 `-crf`를 쓰더라도 어떤 코덱·라이브러리를 호출하는지 살펴야 합니다. x264의 CRF, x265의 CRF, 하드웨어 인코더의 품질 파라미터는 서로 같은 척도가 아닙니다. 비교 목적이라면 숫자를 억지로 맞추기보다 인코더를 고정한 상태에서 설정을 조절해 눈으로 허용 가능한 결과를 고르는 것이 정확합니다.</p><p>인코더 프리셋도 품질-속도 절충에 영향을 줍니다. HandBrake 성능 안내는 프리셋에 따라 인코더, 품질, 필터, 해상도와 오디오 옵션이 달라져 처리 속도와 출력 크기가 크게 변동할 수 있다고 설명합니다. 따라서 결과 기록에는 프로그램명뿐 아니라 코덱, 인코더 방식(소프트웨어/하드웨어), 품질값, 프리셋, 해상도, 오디오 설정을 함께 적어야 재현할 수 있습니다.</p>
-<h2>강의 앱에서 HLS를 만들 때 무엇이 유리한가요?</h2><figure><img src="https://kmt9934.github.io/blog-review/b4/diag1.png" alt="대표 구간을 손실 없이 보관한 복사본으로 비교하고 검증 뒤 FFmpeg 앱에 반영하는 과정" style="max-width:100%;height:auto"><figcaption>원본은 보관하고 샘플 결과와 재생 호환성을 본 뒤 전체 처리로 넘어갑니다.</figcaption></figure><img src="https://kmt9934.github.io/blog-review/b4/fig4.png" alt="HLS는 여러 화질의 영상과 세그먼트, 재생목록을 패키징하는 별도 단계" style="max-width:100%;height:auto"><p>앱에서 적응형 스트리밍을 제공하려면 단일 MP4 압축만으로는 충분하지 않을 수 있습니다. HLS나 MPEG-DASH는 여러 화질로 인코딩한 스트림을 일정 구간의 미디어 조각과 재생목록으로 묶어, 네트워크 상황에 따라 플레이어가 품질을 고르게 하는 구조입니다. Apple의 HLS 소개도 네트워크 상태에 맞춰 비트레이트 스트림을 전환하는 적응형 전송을 설명합니다. MDN은 여러 화질 레벨과 각 시점의 조각을 제공해야 적응형 재생이 가능하고, 품질 수가 많아질수록 저장 용량과 인코딩 시간이 늘 수 있으므로 현실적인 균형을 잡으라고 설명합니다. MDN의 안내도 여러 해상도·비트레이트 파일과 세그먼트, 재생목록을 준비해야 한다고 설명합니다.</p><p>FFmpeg는 HLS 세그먼트와 재생목록을 출력하고 인코딩 과정을 스크립트에 묶을 수 있어, 앱 서버나 백그라운드 작업과 연결하기 쉽습니다. 반면 HandBrake의 Web Optimized 옵션은 MP4 컨테이너의 메타데이터를 파일 앞부분에 배치해 재생 시작을 돕는 Fast Start 기능입니다. HLS 재생목록이나 여러 해상도의 세그먼트를 생성하는 것과는 다른 기능입니다.</p><p>따라서 앱이 사용자별 다운로드용 단일 MP4를 제공한다면 HandBrake도 유용한 수동 기준 도구가 될 수 있습니다. 강의 앱이 HLS/DASH를 생성·갱신하거나 파일 업로드를 자동 처리한다면 FFmpeg를 실제 변환·패키징 엔진으로 유지하는 편이 자연스럽습니다. 어떤 스트리밍 형식이 필요한지는 현재 앱이 단일 MP4를 제공하는지, 적응형 재생목록을 쓰는지로 판단합니다.</p>
-<h2>인코딩 속도와 재생 호환성은 어떻게 따져야 하나요?</h2><img src="https://kmt9934.github.io/blog-review/b4/fig5.png" alt="화질·파일 크기·인코딩 시간·재생 호환성을 함께 검토하는 체크 항목" style="max-width:100%;height:auto"><p>더 작은 파일을 얻는 설정이 항상 더 효율적이거나 강의에 적합한 것은 아닙니다. HandBrake 공식 성능 비교는 같은 테스트 영상이라도 프리셋과 RF가 달라지면 인코딩 속도와 파일 크기가 달라짐을 보여줍니다. 소프트웨어 인코딩은 CPU·메모리 자원을 많이 쓰고, 하드웨어 인코더는 지원 GPU에서 빠를 수 있지만, 특정 기기나 브라우저의 디코딩 호환성을 별도로 살펴야 합니다.</p><p>강의 서비스의 시험표에는 결과 파일의 크기뿐 아니라 변환 시간, 글자·수식 판독성, 음성 싱크, 자막 표시, 모바일·PC 재생 여부를 적으세요. 낮은 비트레이트에서 얇은 글자 가장자리가 흐려지거나 화면 이동 중 디테일이 뭉개지면 해당 설정은 강의용으로 부적합할 수 있습니다. 긴 영상 전체를 인코딩하기 전에 대표 구간을 먼저 처리하면 불필요한 작업을 줄일 수 있습니다.</p><p>H.265나 AV1처럼 더 효율적인 코덱을 검토할 때는 용량만 비교하지 말고, 이용자 기기에서 재생되는지와 서버의 인코딩 시간이 감당되는지도 함께 살펴야 합니다. 브라우저와 기기 조합에 따라 하드웨어 디코딩 지원이 변동할 수 있어, 서비스의 실제 대상 기기에서 재생 테스트를 진행합니다. 강의 자막을 영상에 굽는 경우와 별도 자막 파일로 제공하는 경우도 관리·가독성 면에서 차이가 있습니다.</p>
-<h2>강의 영상에 적용할 때 가장 안전한 작업 순서는 무엇인가요?</h2><img src="https://kmt9934.github.io/blog-review/b4/fig6.png" alt="HandBrake로 짧은 구간을 실험하고 검증한 설정을 FFmpeg 앱에 적용하는 순서" style="max-width:100%;height:auto"><p>원본 파일은 보존하고, 대표 강의 한 편의 짧은 복사본으로 실험하세요. HandBrake에서 소프트웨어 H.264의 기본 프리셋과 품질값을 몇 단계 조정해 글자·수식이 읽히는 최소 품질을 찾고, 결과 파일 크기와 인코딩 시간을 기록합니다. 이 수치는 해당 샘플과 기기에서 나온 관찰값이지 모든 강의에 보장되는 표준값은 아닙니다.</p><p>다음으로 FFmpeg에서 같은 코덱과 비슷한 소프트웨어 인코더 설정을 적용해 샘플을 만들고, 동일 플레이어에서 판독성과 재생 상태를 비교합니다. 앱의 스트리밍 파이프라인이 HLS라면 선택된 화질별 인코딩과 세그먼트 재생, 자막·오디오 트랙까지 확인한 뒤에만 전체 강의에 적용합니다. 원본 보관 정책과 실패 시 재처리 경로도 함께 두면 설정 변경의 위험을 줄일 수 있습니다.</p><div style="display:flex;flex-wrap:wrap;gap:10px;margin:20px 0"><div style="flex:1 1 180px;border:1px solid #d8e1ec;border-radius:12px;padding:14px;background:#fff;color:#1c2f52"><strong style="color:#1c2f52">1단계</strong><h3 style="margin:6px 0;color:#1c2f52">샘플 구간</h3><p style="margin:0;line-height:1.6;color:#1c2f52">글자·수식·움직임 장면을 골라 복사본을 만듭니다.</p></div><div style="flex:1 1 180px;border:1px solid #d8e1ec;border-radius:12px;padding:14px;background:#fff;color:#1c2f52"><strong style="color:#1c2f52">2단계</strong><h3 style="margin:6px 0;color:#1c2f52">눈으로 비교</h3><p style="margin:0;line-height:1.6;color:#1c2f52">같은 기기에서 품질·용량·시간을 기록합니다.</p></div><div style="flex:1 1 180px;border:1px solid #d8e1ec;border-radius:12px;padding:14px;background:#fff;color:#1c2f52"><strong style="color:#1c2f52">3단계</strong><h3 style="margin:6px 0;color:#1c2f52">앱에 반영</h3><p style="margin:0;line-height:1.6;color:#1c2f52">HLS·자막·오디오 재생 뒤 전체 처리합니다.</p></div></div><p>정리하면 HandBrake는 설정 탐색과 수동 비교에, FFmpeg는 앱 자동화와 HLS/DASH 같은 스트리밍 작업에 더 잘 맞습니다. 강의 글자·수식 가독성을 최우선으로 두고 짧은 샘플에서 선택한 설정을 검증한 다음, 그 결과를 FFmpeg 파이프라인에 옮기는 구성이 낫습니다. 현재 앱의 파일 형식이나 실제 영상 샘플을 이 글 작성 과정에서 인코딩·측정하지 않았으므로 특정 RF/CRF 값을 최적이라고 단정하지 않습니다.</p>
-<h3>자주 묻는 질문</h3><h3>HandBrake가 FFmpeg보다 압축 효율이 좋은가요?</h3><p>일괄적으로 그렇지 않습니다. 같은 인코더·옵션이라면 결과 차이는 프리셋 기본값과 필터·컨테이너 설정에서 생길 수 있어 샘플 비교가 필요합니다.</p><h3>1080p 강의는 RF 몇으로 시작하면 되나요?</h3><p>HandBrake 공식 가이드는 x264·x265의 1080p 참고 범위로 RF 20~24를 제시하지만, 실제 글자·수식과 기기에서 판단해야 하는 시작 범위입니다. FFmpeg의 다른 코덱 CRF와 숫자를 직접 대조하지 마세요.</p><h3>HandBrake의 Web Optimized가 HLS 생성인가요?</h3><p>아닙니다. MP4 Fast Start를 위해 메타데이터를 파일 앞쪽에 두는 옵션이며, HLS 재생목록이나 세그먼트는 별도 패키징 작업입니다.</p><h3>무손실로 압축하면 파일이 작아지나요?</h3><p>무손실 인코딩은 원본의 시각 정보를 보존하지만, 손실 압축보다 출력 파일이 커질 수 있습니다. 이미 손실 압축된 원본에서 사라진 화질도 되살아나지는 않습니다.</p>
-<h3>공식 출처</h3><ul><li><a href="https://handbrake.fr/">HandBrake 공식 사이트</a></li><li><a href="https://ffmpeg.org/">FFmpeg 공식 프로젝트 사이트</a></li><li><a href="https://handbrake.fr/docs/en/latest/workflow/adjust-quality.html">HandBrake 공식 문서, 품질 조정·RF 참고 범위</a></li><li><a href="https://handbrake.fr/docs/en/latest/technical/performance.html">HandBrake 공식 문서, 성능 및 프리셋 영향</a></li><li><a href="https://handbrake.fr/docs/en/latest/technical/video-cq-vs-abr.html">HandBrake 공식 문서, Constant Quality와 평균 비트레이트 비교</a></li><li><a href="https://handbrake.fr/docs/en/latest/advanced/web-optimised.html">HandBrake 공식 문서, MP4 Web Optimized/Fast Start</a></li><li><a href="https://ffmpeg.org/ffmpeg-all.html">FFmpeg 공식 문서, 인코딩 옵션과 HLS·세그먼트 출력</a></li><li><a href="https://developer.android.com/media/platform/supported-formats">Android Developers, 기기별 H.264·HEVC 및 컨테이너 지원표</a></li><li><a href="https://developer.apple.com/streaming/">Apple Developer, HLS 적응형 비트레이트 스트리밍 개요</a></li></ul></div>
+<h1>Windows 11 저장 공간 센스 설정 방법: C드라이브 임시 파일 자동 정리와 정리 권장 사항</h1>
+<p>C드라이브 막대가 빨간색으로 바뀌었다면 Windows가 이미 "디스크 공간 부족 상태"라고 판단한 겁니다. Microsoft 지원 문서에 따르면 저장 공간이 부족하면 PC가 느려지고 Windows 업데이트 설치에 문제가 생길 수 있어요. 이럴 때 손으로 파일을 찾아 지우기 전에 켜 둘 기능이 <strong>저장 공간 센스</strong>입니다.</p>
+<p>저장 공간 센스는 임시 파일과 휴지통 항목처럼 필요 없는 것을 자동으로 지워 주는 Windows 11 기본 기능이고, 기본값은 꺼짐입니다. 아래는 설정 앱 메뉴 이름 그대로 켜는 순서, 휴지통·다운로드·OneDrive 기간을 고르는 기준, 그리고 정리 후에도 공간 부족 오류가 날 때 순서대로 해 볼 조치를 정리한 것입니다. 메뉴 경로와 설명은 10월 9일 Microsoft 지원 문서 기준이에요. 드롭다운에 보이는 선택지 이름은 Windows 버전에 따라 조금 다를 수 있습니다.</p>
+
+<h2>정리 전에 남은 공간과 부족 상태 먼저 보기</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig1.png" alt="정리 전에 남은 공간과 부족 상태 먼저 보기 요약: 막대가 빨간색이면 부족 상태">
+<p>먼저 지금 얼마나 남았는지 숫자로 봐 둬야 정리 효과를 비교할 수 있습니다. 작업 표시줄에서 <strong>파일 탐색기</strong>를 열고 왼쪽에서 <strong>내 PC</strong>를 누르면 "장치 및 드라이브"에 드라이브별 사용 가능한 공간이 나와요. 이 숫자를 메모해 두세요.</p>
+<p>두 번째로 볼 곳은 <strong>시작 → 설정 → 시스템 → 저장소</strong>입니다. 맨 위 용량 막대가 빨간색이면 디스크 부족 상태예요. Microsoft 문서는 부족 여부가 디스크 크기와 최소 작동 임계값에 따라 달라진다고 설명합니다. 같은 20GB 여유라도 드라이브 크기에 따라 빨간색일 수도, 아닐 수도 있다는 뜻이에요.</p>
+<p>저장소 화면 아래쪽 "디스크 사용량"에는 앱, 임시 파일, 문서, 사진 같은 범주별 용량이 막대로 나옵니다. 어떤 범주가 큰지 보고 나면 이후 단계에서 무엇을 먼저 손댈지 정할 수 있어요.</p>
+<p>"임시 파일" 범주를 누르면 휴지통, 다운로드, Windows 업데이트 정리 파일처럼 세부 항목이 체크박스와 용량으로 펼쳐집니다. 여기 표시된 숫자가 곧 지웠을 때 돌아오는 공간이라, 아래 계산 예시에 그대로 넣어 쓰면 돼요.</p>
+<div style="overflow-x:auto;margin:20px 0;">
+<table style="width:100%;border-collapse:collapse;font-size:15px;line-height:1.55;border:1px solid #d8e1ec;">
+<thead><tr><th style="border:1px solid #ddd3ea;padding:10px;background:#3b2552;color:#ffffff;">확인할 곳</th><th style="border:1px solid #ddd3ea;padding:10px;background:#f4eefa;color:#3b2552;">메뉴 경로</th><th style="border:1px solid #ddd3ea;padding:10px;background:#f4eefa;color:#3b2552;">볼 것</th></tr></thead>
+<tbody>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">남은 공간</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">파일 탐색기 → 내 PC</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">드라이브별 사용 가능 용량</td></tr>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">부족 상태</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">설정 → 시스템 → 저장소</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">용량 막대가 빨간색인지</td></tr>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">큰 범주</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">저장소 → 디스크 사용량</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">임시 파일·앱·문서 크기</td></tr>
+</tbody></table></div>
+<p>한 가지 알아 둘 점은 저장 공간 센스가 <strong>시스템 드라이브(보통 C:)에서만</strong> 작동한다는 것입니다. D드라이브 같은 다른 드라이브를 정리하려면 <strong>설정 → 시스템 → 저장소 → 고급 저장소 설정 → 다른 드라이브에서 사용되는 저장소</strong>로 따로 들어가야 해요.</p>
+
+<h2>저장 공간 센스 켜고 실행 주기 정하는 순서</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig2.png" alt="저장 공간 센스 켜고 실행 주기 정하는 순서 요약: 스위치 켜고 세부 설정까지">
+<p>켜는 것 자체는 스위치 하나지만, 그 안의 세부 설정까지 정해 둬야 원하는 대로 돌아갑니다. Microsoft 안내 순서대로 따라가면 이렇습니다.</p>
+<ol style="line-height:1.8;">
+<li><strong>시작 → 설정 → 시스템 → 저장소</strong>로 이동합니다.</li>
+<li>"저장 공간 센스" 스위치를 <strong>켜기</strong>로 바꿉니다.</li>
+<li>스위치 옆 "저장 공간 센스" 글자를 눌러 세부 설정 화면으로 들어갑니다.</li>
+<li>"저장 공간 센스 실행" 아래 드롭다운에서 실행 빈도를 고릅니다. 이 빈도는 PC가 온라인이고 로그인돼 있을 때 기준입니다.</li>
+<li>"임시 파일 정리" 아래에서 휴지통과 다운로드 폴더의 삭제 기간을 고릅니다(다음 단락에서 기준 설명).</li>
+<li>OneDrive에 로그인돼 있다면 "로컬에서 사용 가능한 클라우드 콘텐츠" 기간도 고릅니다.</li>
+</ol>
+<figure style="margin:20px 0;text-align:center;">
+<img src="https://kmt9934.github.io/blog-review/b4/diag1.png" alt="설정 → 시스템 → 저장소 → 저장 공간 센스 순서로 들어가 스위치와 세부 설정을 정합니다." style="max-width:100%;height:auto;border-radius:12px;">
+<figcaption style="margin-top:8px;font-size:15px;line-height:1.6;color:#334155;">설정 → 시스템 → 저장소 → 저장 공간 센스 순서로 들어가 스위치와 세부 설정을 정합니다.</figcaption>
+</figure>
+<p>설정은 사용자별로 적용됩니다. 한 PC를 가족이 각자 계정으로 쓴다면 내 계정에서 켠 저장 공간 센스는 내 휴지통과 다운로드 폴더에만 작동하고, 다른 사람은 자기 계정에서 따로 정해야 해요. 또 로그인한 상태로 10분 이상 온라인이어야 실행되니, 잠깐 켰다 끄는 PC라면 실행 시점이 늦어질 수 있습니다.</p>
+<p>스위치만 켜고 세부 설정을 건드리지 않으면 디스크가 부족할 때 실행돼 불필요한 임시 파일을 지우는 기본 동작만 합니다. 휴지통 항목은 일정 기간이 지나면 지워지지만, 다운로드 폴더와 OneDrive 파일은 따로 지정하지 않는 한 그대로 남아요. 다운로드 폴더를 자주 비우지 않는 사람이라면 이 차이가 체감 용량을 크게 가릅니다.</p>
+<p>참고로 스위치를 직접 켠 적이 없는데 켜져 있다면 이상한 일이 아닙니다. Microsoft 문서에 따르면 기본값은 꺼짐이지만 디스크 공간이 부족해지면 Windows가 저장 공간 센스를 자동으로 켤 수 있어요. 이 경우에도 세부 설정은 한 번 들어가서 내 기준으로 바꿔 두는 편이 좋습니다.</p>
+
+<h2>휴지통·다운로드·OneDrive 기간 고르는 기준</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig3.png" alt="휴지통·다운로드·OneDrive 기간 고르는 기준 요약: 지우는 것과 온라인 전용은 다름">
+<p>세부 설정의 세 항목은 지우는 대상과 되돌릴 수 있는지가 서로 다릅니다. 이 차이를 알고 기간을 고르면 실수로 필요한 파일을 잃을 일이 줄어요.</p>
+<div style="overflow-x:auto;margin:20px 0;">
+<table style="width:100%;border-collapse:collapse;font-size:15px;line-height:1.55;border:1px solid #d8e1ec;">
+<thead><tr><th style="border:1px solid #ddd3ea;padding:10px;background:#3b2552;color:#ffffff;">항목</th><th style="border:1px solid #ddd3ea;padding:10px;background:#f4eefa;color:#3b2552;">하는 일</th><th style="border:1px solid #ddd3ea;padding:10px;background:#f4eefa;color:#3b2552;">되돌리기</th></tr></thead>
+<tbody>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">휴지통 기간</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">기간이 지난 휴지통 파일 삭제</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">삭제 후 복원 어려움</td></tr>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">다운로드 폴더 기간</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">그 기간 이상 열지 않은 파일 삭제</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">삭제됨, 미리 옮겨야 함</td></tr>
+<tr><th style="border:1px solid #ddd3ea;padding:10px;text-align:left;background:#faf7fd;color:#3b2552;">클라우드 콘텐츠 기간</th><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">안 연 파일을 온라인 전용으로</td><td style="border:1px solid #ddd3ea;padding:10px;color:#3b2552;">파일은 그대로, 다시 열면 내려받음</td></tr>
+</tbody></table></div>
+<p>가장 조심할 것은 다운로드 폴더입니다. 기준이 "만든 날"이 아니라 "마지막으로 연 날"이라, 설치 파일이나 받아 둔 서류를 다운로드 폴더에 보관하는 습관이 있다면 기간이 지나면서 사라질 수 있어요. 남겨야 할 파일을 문서 폴더로 옮긴 뒤에 이 기간을 켜는 순서가 안전합니다. 휴지통 기간은 반대로 짧게 잡아도 부담이 적은 편이에요. 이미 한 번 지우기로 결정한 파일이니, 복원할 여유를 며칠만 남겨 두면 됩니다.</p>
+<p>OneDrive 항목은 지우는 기능이 아닙니다. Microsoft 문서는 이 설정이 파일을 영구 삭제하지 않고, 공간과 네트워크가 있으면 다시 로컬에서 쓸 수 있다고 적었어요. Windows 11 버전 22H2부터 기본값은 30일 이상 열지 않은 파일을 온라인 전용으로 바꾸는 것이고, "이 디바이스에서 항상 유지"로 표시한 파일은 대상에서 빠집니다.</p>
+<div style="background:#faf7fd;border:1px solid #ddd3ea;border-radius:14px;padding:16px 18px;margin:20px 0;color:#3b2552;">
+<h3 style="margin:0 0 8px;color:#3b2552;">정리 목표 용량을 숫자로 잡는 법</h3>
+<ol style="margin:0;padding-left:20px;line-height:1.8;color:#3b2552;">
+<li style="color:#3b2552;">목표 여유 공간 − 현재 여유 공간 = 확보할 용량 (예: 40GB − 12GB = 28GB)</li>
+<li style="color:#3b2552;">저장소 화면 표시값 합산: 임시 파일 6GB + 휴지통 4GB + 다운로드 15GB = 25GB</li>
+<li style="color:#3b2552;">부족분: 28GB − 25GB = <strong style="color:#3b2552;">3GB는 개인 파일 이동이나 OneDrive 온라인 전용으로 채우기</strong></li>
+</ol>
+</div>
+<p>위 숫자는 계산 방법을 보여 주는 예시이고, 실제 값은 내 PC 저장소 화면에 표시된 용량을 넣으면 됩니다. 목표 여유 공간을 미리 정해 두면 어디까지 지울지 판단하기가 쉬워요.</p>
+
+<h2>정리 권장 사항으로 한 번에 비우기</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig4.png" alt="정리 권장 사항으로 한 번에 비우기 요약: 정리 권장 사항 4개 범주">
+<p>저장 공간 센스를 계속 켜 두고 싶지 않다면 필요할 때만 "정리 권장 사항"을 쓰면 됩니다. Windows가 지울 만한 파일을 범주별로 골라 주고, 지웠을 때 확보되는 용량을 함께 보여 줘요.</p>
+<ol style="line-height:1.8;">
+<li><strong>시작 → 설정 → 시스템 → 저장소 → 정리 권장 사항</strong>을 선택합니다.</li>
+<li>임시 파일, 대용량 또는 사용되지 않는 파일, 클라우드에 동기화된 파일, 사용되지 않는 앱 범주를 하나씩 펼쳐 봅니다.</li>
+<li>지울 항목에 체크하고 범주마다 있는 <strong>정리</strong> 단추를 누릅니다.</li>
+</ol>
+<p>"대용량 또는 사용되지 않는 파일"에는 직접 만든 영상이나 백업 파일이 섞여 나올 수 있어서, 이름을 하나씩 보고 체크하는 게 좋습니다. 반면 임시 파일 범주는 대부분 지워도 되는 항목이라 확보 용량이 큰 경우가 많아요.</p>
+<div style="background:#fff8ed;border-left:4px solid #b54708;border-radius:8px;padding:14px 16px;margin:20px 0;color:#5c2b12;">
+<strong style="color:#5c2b12;">"이전 Windows 설치"는 지우면 되돌릴 수 없습니다</strong>
+<p style="margin:6px 0 0;line-height:1.7;color:#5c2b12;">Windows를 업그레이드한 지 10일이 안 됐다면 이전 버전 Windows가 삭제 가능한 시스템 파일로 나옵니다. 지우면 Windows.old 폴더가 사라져 이전 버전으로 되돌리는 옵션도 없어집니다. 새 버전이 안정적인지 며칠 써 본 뒤 지우세요.</p>
+</div>
+<p>Windows.old를 직접 지우는 경로도 문서에 있습니다. <strong>설정 → 시스템 → 저장소 → 임시 파일</strong>에서 "이전 Windows 설치"에 체크하고 <strong>파일 제거</strong>를 누르면 돼요. 큰 기능 업데이트 직후 C드라이브가 갑자기 줄었다면 이 항목이 원인인 경우가 많습니다.</p>
+<p>예전부터 쓰던 <strong>디스크 정리</strong> 도구도 그대로 있습니다. 작업 표시줄 검색 상자에 "디스크 정리"를 입력해 열고 드라이브를 고르면 되는데, Downloaded Program Files, Temporary Internet Files, Thumbnails가 기본으로 체크돼 있어요. <strong>시스템 파일 정리</strong>를 한 번 더 누르면 업데이트 잔여 파일 같은 시스템 항목까지 계산해 보여 주니, 정리 권장 사항과 결과를 비교해 볼 때 쓰기 좋습니다.</p>
+
+<h2>정리했는데도 공간 부족 오류가 날 때</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig5.png" alt="정리했는데도 공간 부족 오류가 날 때 요약: 가벼운 조치부터 순서대로">
+<p>정리 권장 사항까지 썼는데도 공간 부족 오류가 계속된다면, Microsoft 문서는 임시 폴더가 Microsoft Store 앱 패키지(.appx) 파일로 빠르게 차는 경우를 짚습니다. 이때는 아래 순서로 조치해요.</p>
+<ol style="line-height:1.8;">
+<li><strong>설정 → 시스템 → 문제 해결 → 기타 문제 해결사</strong>에서 "Windows 스토어 앱" 옆 <strong>실행</strong>을 누릅니다.</li>
+<li>Windows 로고 키 + R로 실행 창을 열고 <strong>wsreset.exe</strong>를 입력한 뒤 확인을 누릅니다. 빈 명령 창이 열렸다가 약 10초 뒤 닫히고 Microsoft Store가 열리면 캐시 정리가 끝난 것입니다.</li>
+<li>같은 기타 문제 해결사 화면에서 "Windows 업데이트" 옆 <strong>실행</strong>을 누릅니다.</li>
+<li>PC를 다시 시작하고 오류가 계속되는지 봅니다.</li>
+</ol>
+<p>업데이트 설치 공간이 잠깐 모자란 상황이라면 OS 드라이브 압축도 선택지입니다. 파일 탐색기 → 내 PC → C드라이브 우클릭 → 속성 → 일반 탭에서 "이 드라이브를 압축하여 디스크 공간 절약"을 체크하고 적용을 누르면 돼요. Microsoft는 이 작업이 내용을 지우지 않고 파일을 열고 저장하는 데도 문제가 없다고 설명하며, 업데이트 뒤 체크를 해제해 언제든 압축을 풀 수 있습니다.</p>
+<p>원인을 모르게 용량이 계속 줄어든다면 악성 코드도 의심해 볼 만합니다. 문서는 바이러스나 맬웨어가 시스템 파일을 손상시켜 상당한 공간을 차지할 수 있다며, Windows 보안 같은 백신으로 검사하라고 안내해요. 점검 범위를 넓히고 싶다면 한국인터넷진흥원(KISA) 보호나라의 <a href="https://www.boho.or.kr/kr/subPage.do?menuNo=205017">내 PC 돌보미</a>에서 Windows 11 PC용 자가 보안진단 도구를 받아 보안 설정까지 함께 점검할 수 있습니다. 그래도 업데이트가 안 될 정도로 공간이 없으면 USB 드라이브 같은 외부 저장 장치를 연결해 업데이트를 마치는 방법도 있습니다.</p>
+<p>순서를 정리하면 가벼운 것부터입니다. 스토어 캐시와 문제 해결사는 파일을 지우지 않으니 먼저 해 보고, 드라이브 압축은 업데이트처럼 일시적으로 공간이 필요할 때, 외부 저장 장치는 마지막 수단으로 남겨 두면 됩니다.</p>
+
+<h2>새 파일 저장 위치를 다른 드라이브로 돌리기</h2>
+<img src="https://kmt9934.github.io/blog-review/b4/fig6.png" alt="새 파일 저장 위치를 다른 드라이브로 돌리기 요약: 새 파일은 다른 드라이브로">
+<p>정리는 한 번으로 끝나지 않으니 새로 쌓일 파일의 위치를 바꿔 두면 다음 정리 주기가 길어집니다. D드라이브나 외장 드라이브가 있다면 <strong>설정 → 시스템 → 저장소 → 고급 저장소 설정 → 새 콘텐츠가 저장되는 위치</strong>에서 콘텐츠 종류별로 드라이브를 고를 수 있어요. 원하는 드라이브가 목록에 없으면 PC에 연결돼 있는지부터 봅니다.</p>
+<p>이미 쌓인 큰 파일은 파일 탐색기에서 찾아 옮깁니다. 비디오·음악·사진·다운로드 폴더에 큰 파일이 몰려 있는 경우가 많고, 폴더를 연 뒤 <strong>보기 → 세부 정보</strong>로 바꾸고 빈 곳을 우클릭해 <strong>정렬 기준 → 크기</strong>를 고르면 가장 큰 파일이 맨 위로 올라와요. 파일을 지웠다면 휴지통을 비워야 실제 공간이 돌아옵니다.</p>
+<p>자주 열지 않지만 남겨야 할 사진이나 영상은 USB 드라이브나 SD 카드로 옮기는 방법을 문서가 권합니다. 외장 장치를 연결한 뒤 파일 탐색기에서 파일을 고르고 <strong>홈 → 이동 → 위치 선택</strong>으로 외장 드라이브를 지정하면 돼요. 장치가 연결돼 있는 동안은 파일을 그대로 쓸 수 있고 PC 공간은 차지하지 않습니다.</p>
+<p>상황별로 정리하면 이렇습니다. OneDrive를 쓰는 노트북이라면 클라우드 콘텐츠 기간을 켜 두는 것만으로 사진·문서가 온라인 전용으로 바뀌며 공간이 생겨요. 드라이브가 두 개인 데스크톱이라면 새 콘텐츠 저장 위치를 D드라이브로 돌리고, C드라이브는 저장 공간 센스로 임시 파일만 관리하는 구성이 손이 덜 갑니다.</p>
+<div style="background:#faf7fd;border:1px solid #ddd3ea;border-radius:14px;padding:16px 18px;margin:20px 0;color:#3b2552;">
+<h3 style="margin:0 0 8px;color:#3b2552;">Microsoft 공식 도움말 열기</h3>
+<p style="margin:0 0 12px;line-height:1.7;color:#3b2552;">화면 이름이 다르게 보이면 Windows 버전을 확인한 뒤 같은 문서의 Windows 10 탭과 비교해 보세요.</p>
+<p style="margin:0 0 8px;color:#3b2552;"><a class="official-link-btn" href="https://support.microsoft.com/ko-kr/windows/experience/storage-filemanagement/manage-drive-space-with-storage-sense" style="display:inline-block;padding:10px 16px;border-radius:10px;background:#5b2d8c;color:#ffffff;font-weight:700;text-decoration:none;">저장 공간 센스로 드라이브 공간 관리 →</a></p>
+<p style="margin:0 0 8px;color:#3b2552;"><a class="official-link-btn" href="https://support.microsoft.com/ko-kr/windows/experience/storage-filemanagement/free-up-drive-space-in-windows" style="display:inline-block;padding:10px 16px;border-radius:10px;background:#ffffff;border:2px solid #5b2d8c;color:#5b2d8c;font-weight:700;text-decoration:none;">Windows에서 드라이브 공간 확보 →</a></p>
+</div>
+
+<h3>참고한 Microsoft 공식 자료</h3>
+<ul>
+<li><a href="https://support.microsoft.com/ko-kr/windows/experience/storage-filemanagement/manage-drive-space-with-storage-sense">Microsoft 지원: 저장 공간 센스를 사용하여 드라이브 공간 관리</a></li>
+<li><a href="https://support.microsoft.com/ko-kr/windows/experience/storage-filemanagement/free-up-drive-space-in-windows">Microsoft 지원: Windows에서 드라이브 공간 확보</a></li>
+<li><a href="https://www.boho.or.kr/kr/subPage.do?menuNo=205017">KISA 보호나라: 내 PC·모바일 돌보미</a></li>
+<li><a href="https://support.microsoft.com/en-us/windows/experience/storage-filemanagement/manage-drive-space-with-storage-sense">Microsoft Support: Manage drive space with Storage Sense (영문)</a></li>
+</ul>
