@@ -1,11 +1,11 @@
 {
- "title": "예금 적금 이자 계산법",
- "subtitle": "같은 1,200만 원·연 3.5%인데 적금 세후 이자가 절반 수준인 이유",
+ "title": "연금저축 IRP 세액공제 비교",
+ "subtitle": "연말까지 900만 원 넣으면 환급 148만 5천 원, 어느 계좌에 먼저 넣을까",
  "tag": "생활·돈·IT 실용 정보",
  "style": 2,
- "h1": "예금 적금 이자 계산법: 같은 1,200만 원·연 3.5%인데 적금 세후 이자가 절반 수준인 이유",
- "illustration_sha256": "75257b31637b0724a446bad536fe5114541d89421a8dc8fc331d78cbd9fb1dbf",
- "thumbnail_sha256": "da00037bed2eed2c53e4235c1026dfcf5f81b03e5f860188e23269ad56f078bf",
+ "h1": "연금저축 IRP 세액공제 비교: 연말까지 900만 원 넣으면 환급 148만 5천 원, 어느 계좌에 먼저 넣을까",
+ "illustration_sha256": "89b3ca3d784a632a5781cf9027c68192d1b5be1b6435a9eea0ba50e151eec172",
+ "thumbnail_sha256": "1fc1d6db39eaf5a6a7048f320bd049037a4d900f68ea3ad5545d376b176c781d",
  "generator": "thumb_a.py",
- "created_at": "2026-10-13T16:51:12"
+ "created_at": "2026-10-15T20:15:44"
 }
