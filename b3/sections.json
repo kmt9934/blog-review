@@ -2,7 +2,7 @@
   "palette": "blue",
   "sections": [
     {
-      "section": "하루 수급액이 상한과 하한 사이에 붙어 있는 이유",
+      "section": "실업급여 하루 금액이 상한과 하한에 붙는 이유",
       "label": "하루 금액",
       "title": "상한 68,100원, 하한 66,048원",
       "bullets": [
