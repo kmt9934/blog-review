@@ -1,11 +1,11 @@
 {
- "title": "실업급여 계산",
- "subtitle": "구직급여 수급액과 소정급여일수 표",
+ "title": "퇴직금 계산",
+ "subtitle": "평균임금에 상여금·연차수당 넣는 법",
  "tag": "생활·돈·IT 실용 정보",
  "style": 2,
- "h1": "실업급여 계산: 구직급여 수급액과 소정급여일수 표",
- "illustration_sha256": "b205284e0c085184c1de203bdb67740c739c47af0474b5a22b18a35f18809329",
- "thumbnail_sha256": "c012c2b06e7fc9008b592c85afec0064c9f1989376a2614a651e8ba1a4b5b986",
+ "h1": "퇴직금 계산: 평균임금에 상여금·연차수당 넣는 법",
+ "illustration_sha256": "9c75eee4e34b7af32ef87788b6e500eb77c602428542f82a6f7028d005ce746f",
+ "thumbnail_sha256": "f1e54f3273aed5450dd7d8134ea72f6d022a2cda55107b166d061ed5468e8bf5",
  "generator": "thumb_a.py",
- "created_at": "2026-11-26T23:44:35"
+ "created_at": "2026-11-28T19:15:55"
 }
